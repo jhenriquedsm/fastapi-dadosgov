@@ -1,0 +1,47 @@
+erDiagram
+    USER ||--o{ COLETA_PRECO : "gerencia (admin)"
+    REVENDA ||--o{ COLETA_PRECO : "tem"
+    PRODUTO ||--o{ COLETA_PRECO : "tem"
+    
+    USER {
+        int id PK
+        string username UK
+        string email UK
+        string hashed_password
+        enum role
+        int is_active
+        datetime created_at
+        datetime updated_at
+    }
+    
+    REVENDA {
+        int id PK
+        string cnpj UK
+        string nome
+        string municipio
+        string estado
+        string regiao_sigla
+        string bandeira
+        datetime created_at
+        datetime updated_at
+    }
+    
+    PRODUTO {
+        int id PK
+        string nome UK
+        string descricao
+        datetime created_at
+        datetime updated_at
+    }
+    
+    COLETA_PRECO {
+        int id PK
+        date data_coleta
+        float valor_venda
+        float valor_compra
+        string unidade_medida
+        int revenda_id FK
+        int produto_id FK
+        datetime created_at
+        datetime updated_at
+    }
