@@ -1,0 +1,360 @@
+{
+  "info": {
+    "name": "API de Preços de Combustíveis",
+    "description": "Collection para testar todos os endpoints da API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticação",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has user data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('username');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"leitor1\",\n  \"email\": \"leitor@example.com\",\n  \"password\": \"senha123\",\n  \"role\": \"leitor\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has access token\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('access_token');",
+                  "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "admin"
+                },
+                {
+                  "key": "password",
+                  "value": "admin123"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Produtos",
+      "item": [
+        {
+          "name": "List Produtos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produtos",
+              "host": ["{{base_url}}"],
+              "path": ["produtos"]
+            }
+          }
+        },
+        {
+          "name": "Create Produto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"GASOLINA PREMIUM\",\n  \"descricao\": \"Gasolina premium aditivada\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/produtos",
+              "host": ["{{base_url}}"],
+              "path": ["produtos"]
+            }
+          }
+        },
+        {
+          "name": "Get Produto by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produtos/1",
+              "host": ["{{base_url}}"],
+              "path": ["produtos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Revendas",
+      "item": [
+        {
+          "name": "List Revendas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/revendas?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["revendas"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Revendas - Filtro Estado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/revendas?estado=SP&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["revendas"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "SP"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Revenda",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cnpj\": \"12.345.678/0001-90\",\n  \"nome\": \"Posto Exemplo\",\n  \"municipio\": \"São Paulo\",\n  \"estado\": \"SP\",\n  \"regiao_sigla\": \"SE\",\n  \"bandeira\": \"Shell\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/revendas",
+              "host": ["{{base_url}}"],
+              "path": ["revendas"]
+            }
+          }
+        },
+        {
+          "name": "Get Revenda by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/revendas/1",
+              "host": ["{{base_url}}"],
+              "path": ["revendas", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Revenda",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bandeira\": \"Petrobras\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/revendas/1",
+              "host": ["{{base_url}}"],
+              "path": ["revendas", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Coletas de Preço",
+      "item": [
+        {
+          "name": "List Coletas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/coletas?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["coletas"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Coletas - Filtros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/coletas?estado=SP&produto=GASOLINA&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["coletas"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "SP"
+                },
+                {
+                  "key": "produto",
+                  "value": "GASOLINA"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Coleta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data_coleta\": \"2024-10-24\",\n  \"valor_venda\": 5.89,\n  \"valor_compra\": 5.20,\n  \"unidade_medida\": \"R$/litro\",\n  \"revenda_id\": 1,\n  \"produto_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coletas",
+              "host": ["{{base_url}}"],
+              "path": ["coletas"]
+            }
+          }
+        },
+        {
+          "name": "Get Coleta by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/coletas/1",
+              "host": ["{{base_url}}"],
+              "path": ["coletas", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
