@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./data/fastapi_dadosgov.db"
     
     # JWT
-    SECRET_KEY: str = "fastapi-dadosgov-rest-api"
+    SECRET_KEY: str = "your-secret-key-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
@@ -31,6 +31,7 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
+    """Retorna instância singleton das configurações"""
     return Settings()
 
 
